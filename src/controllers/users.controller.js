@@ -8,16 +8,16 @@ const getLoginUser = async (req, res, next) => {
 
     /* Response */
     if (!user) {
-      res.status(404).send('user not found')
+      res.status(404).json({ message: 'user not found' })
     } else if (!req.body?.password) {
-      res.status(400).send('no password provided')
+      res.status(400).json({ message: 'no password provided' })
     } else if (user.password !== req.body.password) {
-      res.status(400).send('wrong password')
+      res.status(400).json({ message: 'wrong password' })
     } else {
       res.status(200).json(user)
     }
   } else {
-    res.status(400).send('no email provided')
+    res.status(400).json({ message: 'no email provided' })
   }
 }
 
