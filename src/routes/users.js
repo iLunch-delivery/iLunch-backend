@@ -1,9 +1,15 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+/* GET - get user info */
+router.get('/', function (req, res, next) {
+  res.send('respond with a resource')
+})
 
-module.exports = router;
+/* POST - create new user */
+
+/* PATCH - update user info */
+
+/* GET - get user files  */
+
+module.exports = router
