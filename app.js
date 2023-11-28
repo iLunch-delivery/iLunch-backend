@@ -3,6 +3,22 @@ var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
+require('dotenv').config() // .env file
+
+// DB connection
+var mongoose = require('mongoose')
+
+const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ilunch-db.hrlt9mx.mongodb.net/?retryWrites=true&w=majority`
+
+mongoose
+  .connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log('DB Connected!'))
+  .catch((err) => {
+    console.log(`DB Connection Error: ${err.message}`)
+  })
 
 var indexRouter = require('./src/routes/index')
 var usersRouter = require('./src/routes/users')
