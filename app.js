@@ -8,13 +8,10 @@ require('dotenv').config() // .env file
 // DB connection
 var mongoose = require('mongoose')
 
-const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ilunch-db.hrlt9mx.mongodb.net/?retryWrites=true&w=majority`
+const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ilunch-db.hrlt9mx.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
 
 mongoose
-  .connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+  .connect(uri)
   .then(() => console.log('DB Connected!'))
   .catch((err) => {
     console.log(`DB Connection Error: ${err.message}`)
