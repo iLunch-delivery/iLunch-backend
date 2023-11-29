@@ -8,13 +8,10 @@ require('dotenv').config() // .env file
 // DB connection
 var mongoose = require('mongoose')
 
-const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ilunch-db.hrlt9mx.mongodb.net/?retryWrites=true&w=majority`
+const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ilunch-db.hrlt9mx.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
 
 mongoose
-  .connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+  .connect(uri)
   .then(() => console.log('DB Connected!'))
   .catch((err) => {
     console.log(`DB Connection Error: ${err.message}`)
@@ -22,6 +19,7 @@ mongoose
 
 var indexRouter = require('./src/routes/index')
 var usersRouter = require('./src/routes/users')
+var jobsRouter = require('./src/routes/jobs')
 
 var app = express()
 
@@ -37,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
+app.use('/jobs', jobsRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

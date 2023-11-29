@@ -1,9 +1,17 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+const { getLoginUser, singUpUser, updateUser, getUserFiles} = require('../controllers/users.controller')
+var router = express.Router()
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+/* GET - get user info */
+router.get('/login/', getLoginUser)
 
-module.exports = router;
+/* POST - create new user */
+router.post('/signup/',singUpUser )
+
+/* PATCH - update user info */
+router.patch('/update/', updateUser)
+
+/* GET - get user files  */
+router.get('/files/', getUserFiles)
+
+module.exports = router
