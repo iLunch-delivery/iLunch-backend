@@ -1,14 +1,13 @@
 const express = require('express')
 const router = express.Router()
 
-
 const {
-    getShoppingCart,
-    //editShoppingCart,
-    //deleteProduct,
-    //getShoppingCartDetails,
-    updateShoppingCart,
-    addProduct
+  getShoppingCart,
+  //editShoppingCart,
+  //deleteProduct,
+  //getShoppingCartDetails,
+  updateShoppingCart,
+  addProduct
 } = require('../controllers/shoppin-cart.controller')
 
 //GET - get shopping cart elements
@@ -18,4 +17,4 @@ router.put('/:userId/update', updateShoppingCart)
 
 router.put('/:userId/add_product/:productId', addProduct)
 
-module.exports = router;
+module.exports = router

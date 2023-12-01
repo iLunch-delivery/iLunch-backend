@@ -14,7 +14,12 @@ const getShoppingCart = async (req, res, next) => {
             if (!products.length) { // Verificar si el array de productos está vacío
                 return res.status(404).json({ message: 'Shopping cart empty' });
             }
-            const order = { ...cart.toObject(), productos: products }; // Incluir el array de productos en la respuesta
+            let totalPrice = 0;
+            for (const product of products) {
+                totalPrice += product.price * product.units;
+            }
+            const platformFee = totalPrice * Number(process.env.PLATFORM_FEE);
+            const order = { ...cart.toObject(), products: products, totalPrice: totalPrice, platformFee: platformFee }; // Incluir el array de productos en la respuesta
             res.status(200).json(order);
         } catch (error) {
             // Manejo de errores con middleware de errores
