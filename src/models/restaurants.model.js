@@ -21,6 +21,6 @@ const RestaurantSchema = new mongoose.Schema({
   address: { type: String, required: true }
 }, { collection: 'Restaurants' });
 
-const Restaurant = mongoose.model('Restaurant', RestaurantSchema);
+const Restaurant = mongoose.model('Restaurants', RestaurantSchema);
 
 module.exports = Restaurant;
