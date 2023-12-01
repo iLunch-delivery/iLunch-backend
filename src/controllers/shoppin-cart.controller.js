@@ -46,19 +46,17 @@ const deleteProduct = async (req, res, next) => {
 const editShoppingCart = async (req, res) => {
     const {productId} = req.params
     const newUnits = req.body.units
-
-    const product = await Products.find({ "_id.productId": productId }); 
-
-    if (!product) {
-    res.status(404).send({ message: 'El producto no existe' });
-    return;
-    }
-
-    product.units = newUnits;
-    await orderProduct.save();
-    res.status(200).send({ message: 'Las unidades han sido actualizadas' });
+    const update = { units: newUnits };
     
-}
+    const result = await OrderProduct.updateOne({ "_id.productId": productId }, update);
+    
+    if (result.nModified === 0) {
+        res.status(404).send({ message: 'El producto no existe' });
+        return;
+    }
+    
+    res.status(200).send({ message: 'Las unidades han sido actualizadas' });
+    }
 
 /*
 const getShoppingCartDetails = async (req, res) => {
