@@ -43,13 +43,35 @@ const deleteProduct = async (req, res, next) => {
         }
 }
 
-const getShoppingCartDetails = asyn (req, res) => {
-    const {userId, restaurantId, }
-    const user = await User.findOne({})
+const editShoppingCart = async (req, res) => {
+    const {productId} = req.params
+    const newUnits = req.body.units
+
+    const product = await Products.find({ "_id.productId": productId }); 
+
+    if (!product) {
+    res.status(404).send({ message: 'El producto no existe' });
+    return;
+    }
+
+    product.units = newUnits;
+    await orderProduct.save();
+    res.status(200).send({ message: 'Las unidades han sido actualizadas' });
+    
 }
+
+/*
+const getShoppingCartDetails = async (req, res) => {
+    const {userId, restaurantId, email }
+    const user = await User.findOne({email})
+
+    res.status(200).json()
+
+}*/
 
 module.exports = {
     getShoppingCart,
     deleteProduct,
-    getShoppingCartDetails
+    editShoppingCart
+    //getShoppingCartDetails
 }
