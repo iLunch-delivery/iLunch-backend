@@ -3,6 +3,7 @@ var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
+var cors = require('cors') // CORS
 require('dotenv').config() // .env file
 
 // DB connection
@@ -27,6 +28,10 @@ var app = express()
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
+
+// CORS
+app.use(cors())
+app.options('*', cors())
 
 app.use(logger('dev'))
 app.use(express.json())

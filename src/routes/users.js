@@ -8,7 +8,7 @@ const {
 var router = express.Router()
 
 /* GET - get user info */
-router.get('/login/', getLoginUser)
+router.get('/login/:email/:password/', getLoginUser)
 
 /* POST - create new user */
 router.post('/signup/', singUpUser)
