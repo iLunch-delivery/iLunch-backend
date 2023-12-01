@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const Cart = require('../models/ordersCart.model')
 const Products = require('../models/ordersProducts.model')
 
@@ -27,38 +28,35 @@ const getShoppingCart = async (req, res, next) => {
 const updateShoppingCart = async (req, res, next) => {
     if (req.params?.userId) {
         try {
-            const {userId} = req.params;
-            const cart = await Cart.findOne({ userId });
-            // Si no existe el carrito, se crea
+            const { userId } = req.params;
+
+            let cart = await Cart.findOne({ userId });
+
             if (!cart) {
-                const requiredFields = {
-                    restaurantId: 'restaurantId is required',
-                    deliveryWay: 'deliveryWay is required',
-                    paymentMethod: 'name is required',
-                    additionalComments: 'password is required',
-                    deliveryPrice: 'phone is required'
-                }
-                
-                for (const field in requiredFields) {
-                    if (!req.body[field]) {
-                        return res.status(400).json({ message: requiredFields[field] })
-                    }
-                }
-                req.body[deliveryWay]
-                const newCart = new Cart({
-                    ...req.body
-                  })
-                const savedCart = await newCart.save()
-                res.status(201).json(savedCart)
+                // Crear un nuevo carrito si no existe
+                cart = new Cart({
+                    _id: new mongoose.Types.ObjectId(),
+                    userId,
+                    ... req.body,
+                });
+                console.log(cart)
+
+                await cart.save();
+                res.status(201).json(cart);
+            } else {
+                // Lógica para actualizar el carrito existente, si es necesario
+                // ...
+                res.status(200).json(cart);
             }
         } catch (error) {
-            // Manejo de errores con middleware de errores
-            next(error); 
+            next(error);
         }
     } else {
         res.status(400).json({ message: 'No userId provided' });
     }
-}
+};
+
+
 
 module.exports = {
     getShoppingCart,

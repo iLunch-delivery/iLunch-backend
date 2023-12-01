@@ -13,6 +13,6 @@ const {
 //GET - get shopping cart elements
 router.get('/:userId', getShoppingCart)
 
-route.put('/:userId/update', updateShoppingCart)
+router.put('/:userId/update', updateShoppingCart)
 
 module.exports = router;
