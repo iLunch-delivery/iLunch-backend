@@ -24,7 +24,30 @@ const getShoppingCart = async (req, res, next) => {
     }
 };
 
+const deleteProduct = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const productId = req.params.productId;
+        const orderCart = await Cart.findOne({
+            _id: {
+            productId,
+            userId
+            }
+        });
+
+        if (!orderCart) {
+            res.status(404).send({ message: 'The product does not exists' });
+            return;
+        }
+        await orderCart.delete();
+        res.status(200).send({ message: 'El producto ha sido eliminado' });
+        } catch (error) {
+            // Manejo de errores con middleware de errores
+            next(error); 
+        }
+}
 
 module.exports = {
-    getShoppingCart
+    getShoppingCart,
+    deleteProduct
 }
