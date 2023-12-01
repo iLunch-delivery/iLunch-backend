@@ -60,10 +60,10 @@ const addProduct = async (req, res, next) => {
         const { userId, productId } = req.params;
         const body = req.body; // O los datos específicos a actualizar
 
-        await OrderProduct.updateOne(
+        await Products.updateOne(
             {
                 '_id.userId': userId,
-                '_id.productId': productId
+                '_id.productId': new mongoose.Types.ObjectId(productId)
             },
             {
                 $set: {
