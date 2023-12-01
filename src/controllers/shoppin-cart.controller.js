@@ -29,7 +29,7 @@ const getShoppingCart = async (req, res, next) => {
 const deleteProduct = async (req, res, next) => {
     try {
         const { userId, productId } = req.params;
-        const result = await Products.deleteOne({ "_id.productId": productId });
+        const result = await Products.deleteOne({ "_id.productId": productId, "_id.userId": userId });
         const products = await Products.find({ "_id.userId": userId }); 
         if (result.deletedCount === 0) {
             res.status(404).send({ message: 'The product does not exists' });
@@ -44,11 +44,11 @@ const deleteProduct = async (req, res, next) => {
 }
 
 const editShoppingCart = async (req, res) => {
-    const {productId} = req.params
+    const {productId, userId} = req.params
     const newUnits = req.body.units
     const update = { units: newUnits };
     
-    const result = await OrderProduct.updateOne({ "_id.productId": productId }, update);
+    const result = await Products.updateOne({ "_id.productId": productId, "_id.userId": userId }, update);
     
     if (result.nModified === 0) {
         res.status(404).send({ message: 'El producto no existe' });
