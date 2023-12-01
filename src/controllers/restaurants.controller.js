@@ -1,6 +1,7 @@
 const Restaurants = require('../models/restaurants.model');
 const Menus = require('../models/menus.model'); // Asumiendo que este es el modelo correcto para el menú
 
+/* GET - get restaurant by id */
 const getRestaurantById = async (req, res, next) => {
     if (req.params?.restaurantId) {
         try {
@@ -27,6 +28,7 @@ const getRestaurantById = async (req, res, next) => {
     }
 };
 
+/* GET - search restaurant */
 const searchRestaurants = async(req, res, next) => {
     if (req.query.search) {
         try {
