@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const Cart = require('../models/ordersCart.model')
 const Products = require('../models/ordersProducts.model')
 
@@ -29,7 +30,65 @@ const getShoppingCart = async (req, res, next) => {
     }
 };
 
+const updateShoppingCart = async (req, res, next) => {
+    if (req.params?.userId) {
+        try {
+            const { userId } = req.params;
+            let cart = await Cart.findOne({ userId });
+
+            if (!cart) {
+                // Crear un nuevo carrito si no existe
+                cart = new Cart({
+                    _id: new mongoose.Types.ObjectId(),
+                    userId,
+                    ...req.body
+                });
+
+                await cart.save();
+                res.status(200).json(cart);
+            } else {
+                // Actualizar el carrito existente
+                Object.assign(cart, req.body);
+                const result = await cart.save();
+                res.status(200).json({message: 'Success'});
+            }
+        } catch (error) {
+            next(error);
+        }
+    } else {
+        res.status(400).json({ message: 'No userId provided' });
+    }
+};
+
+const addProduct = async (req, res, next) => {
+    try {
+        const { userId, productId } = req.params;
+        const body = req.body; // O los datos específicos a actualizar
+
+        await Products.updateOne(
+            {
+                '_id.userId': userId,
+                '_id.productId': new mongoose.Types.ObjectId(productId)
+            },
+            {
+                $set: {
+                    imageURL: body.imageURL,
+                    title: body.title,
+                    price: body.price
+                },
+                $inc: { units: 1 } // Incrementar en 1 las unidades
+            },
+            { upsert: true } // Crear el documento si no existe
+        );
+
+        res.status(200).json({ message: 'Producto actualizado o creado exitosamente' });
+    } catch (error) {
+        next(error);
+    }
+};
 
 module.exports = {
-    getShoppingCart
+    getShoppingCart,
+    updateShoppingCart,
+    addProduct
 }
