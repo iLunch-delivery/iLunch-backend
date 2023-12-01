@@ -1,5 +1,6 @@
 const Cart = require('../models/ordersCart.model')
 const Products = require('../models/ordersProducts.model')
+const User = require('../models/users.model')
 const mongoose = require('mongoose');
 
 const getShoppingCart = async (req, res, next) => {
@@ -28,28 +29,27 @@ const getShoppingCart = async (req, res, next) => {
 const deleteProduct = async (req, res, next) => {
     try {
         const { userId, productId } = req.params;
-        const productIdObj = new mongoose.Types.ObjectId(productId);
-        
-        const result = await Products.deleteOne({
-            '_id.productId': productIdObj,
-            '_id.userId': userId
-        });
-
-
+        const result = await Products.deleteOne({ "_id.productId": productId });
+        const products = await Products.find({ "_id.userId": userId }); 
         if (result.deletedCount === 0) {
-            console.log(orderCart, productId, userId)
             res.status(404).send({ message: 'The product does not exists' });
             return;
         }
-
-        res.status(200).send({ message: 'El producto ha sido eliminado'});
+        res.status(200).send({ message: 'El producto ha sido eliminado', productos: products});
+        
         } catch (error) {
             // Manejo de errores con middleware de errores
             next(error); 
         }
 }
 
+const getShoppingCartDetails = asyn (req, res) => {
+    const {userId, restaurantId, }
+    const user = await User.findOne({})
+}
+
 module.exports = {
     getShoppingCart,
-    deleteProduct
+    deleteProduct,
+    getShoppingCartDetails
 }
