@@ -9,7 +9,7 @@ const OrderProductSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   title: { type: String, required: true },
   units: { type: Number, required: true }
-}, { collection: 'Order_products' });
+}, { collection: 'Order_products', versionKey: false });
 
 const OrderProduct = mongoose.model('Order_products', OrderProductSchema);
 

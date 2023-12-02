@@ -3,6 +3,7 @@ var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
+var cors = require('cors') // CORS
 require('dotenv').config() // .env file
 
 // DB connection
@@ -21,13 +22,23 @@ var indexRouter = require('./src/routes/index')
 var usersRouter = require('./src/routes/users')
 var jobsRouter = require('./src/routes/jobs')
 var restaurantsRouter = require('./src/routes/restaurants')
-var orderRouter = require ('./src/routes/shopping-cart')
+var orderRouter = require('./src/routes/shopping-cart')
 
 var app = express()
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
+
+// CORS
+var options = {
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}
+app.use(cors(options))
+app.options('*', cors())
 
 app.use(logger('dev'))
 app.use(express.json())
