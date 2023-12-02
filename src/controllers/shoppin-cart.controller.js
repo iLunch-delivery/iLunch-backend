@@ -1,6 +1,7 @@
 const Cart = require('../models/ordersCart.model')
 const Products = require('../models/ordersProducts.model')
 const User = require('../models/users.model')
+const Restaurante = require('../models/restaurants.model')
 const mongoose = require('mongoose');
 
 const getShoppingCart = async (req, res, next) => {
@@ -58,18 +59,46 @@ const editShoppingCart = async (req, res) => {
     res.status(200).send({ message: 'Las unidades han sido actualizadas' });
     }
 
-/*
 const getShoppingCartDetails = async (req, res) => {
-    const {userId, restaurantId, email }
+    const {userId} = req.params
+    //const {userId, restaurantId, email } = req.body
     const user = await User.findOne({email})
+    const cart = await Cart.findOne({ userId });
+    const products = await Products.find({ "_id.userId": userId }); 
+    if (!cart) {
+        return res.status(404).json({ message: 'No tiene un pedido activo' });
+    }
+    if (!products.length) { // Verificar si el array de productos está vacío
+        return res.status(404).json({ message: 'No tiene productos para comprar' });
+    }
+    let totalPrice = 0
+    for (const product of products) {
+        totalPrice+=product.units*product.price
+    }
 
-    res.status(200).json()
+    if (!user) { 
+        return res.status(404).json({ message: 'No se encontró el usuario' });
+    }
+    
+    const restaurantId = cart.restaurantId
+    const restaurante = await Restaurante.findOne({restaurantId})
+    if (!restaurante) {
+        return res.status(404).json({ message: 'No se encontró el restaurante' });
+    }    
+    const detalles={
+        userInfo: user,
+        restaurantDetails: restaurante,
+        deliveryDetails:cart,
+        productos: products,
+        total: totalPrice
+        }
+    res.status(200).send(detalles)
 
-}*/
+}
 
 module.exports = {
     getShoppingCart,
     deleteProduct,
-    editShoppingCart
-    //getShoppingCartDetails
+    editShoppingCart,
+    getShoppingCartDetails
 }

@@ -16,7 +16,7 @@ router.get('/:userId', getShoppingCart)
 router.delete('/:userId/delete_product/:productId', deleteProduct)
 
 //GET - get order details
-//router.get('/order/:userId', getShoppingCartDetails)
+router.get('/order/:userId', getShoppingCartDetails)
 
 //PUT - update product units
 router.put('/:userId/update_product/:productId', editShoppingCart)
