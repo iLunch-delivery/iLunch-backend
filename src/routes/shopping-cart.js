@@ -2,19 +2,22 @@ const express = require('express')
 const router = express.Router()
 
 const {
-  getShoppingCart,
-  //editShoppingCart,
-  //deleteProduct,
-  //getShoppingCartDetails,
-  updateShoppingCart,
-  addProduct
-} = require('../controllers/shopping-cart.controller')
+    getShoppingCart,
+    editShoppingCart,
+    deleteProduct,
+    getShoppingCartDetails
+} = require('../controllers/shoppin-cart.controller')
 
 //GET - get shopping cart elements
 router.get('/:userId', getShoppingCart)
 
-router.put('/:userId/update', updateShoppingCart)
+//DELETE - delete shopping cart item
+router.delete('/:userId/delete_product/:productId', deleteProduct)
 
-router.put('/:userId/add_product/:productId', addProduct)
+//GET - get order details
+router.get('/order/:userId', getShoppingCartDetails)
 
-module.exports = router
+//PUT - update product units
+router.put('/:userId/update_product/:productId', editShoppingCart)
+
+module.exports = router;
