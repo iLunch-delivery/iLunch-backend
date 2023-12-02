@@ -1,13 +1,15 @@
 const { default: mongoose } = require('mongoose');
 const Cart = require('../models/ordersCart.model')
-const Products = require('../models/ordersProducts.model')
+const Product = require('../models/ordersProducts.model')
+const User = require('../models/users.model')
+const Restaurant = require('../models/restaurants.model')
 
 const getShoppingCart = async (req, res, next) => {
     if (req.params?.userId) {
         try {
             const { userId } = req.params;
             const cart = await Cart.findOne({ userId });
-            const products = await Products.find({ "_id.userId": userId }); // Cambiado de findOne a find para obtener un array
+            const products = await Product.find({ "_id.userId": userId }); // Cambiado de findOne a find para obtener un array
             if (!cart) {
                 return res.status(404).json({ message: 'Shopping cart does not exist' });
             }
@@ -65,7 +67,7 @@ const addProduct = async (req, res, next) => {
         const { userId, productId } = req.params;
         const body = req.body; // O los datos específicos a actualizar
 
-        await Products.updateOne(
+        await Product.updateOne(
             {
                 '_id.userId': userId,
                 '_id.productId': new mongoose.Types.ObjectId(productId)
@@ -87,8 +89,79 @@ const addProduct = async (req, res, next) => {
     }
 };
 
+const updateProductUnits = async (req, res) => {
+  const {productId, userId} = req.params
+  const newUnits = req.body.units
+  const update = { units: newUnits };
+  
+  const result = await Product.updateOne({ "_id.productId": productId, "_id.userId": userId }, update);
+  
+  if (result.nModified === 0) {
+      res.status(404).send({ message: 'El producto no existe' });
+      return;
+  }
+  
+  res.status(200).send({ message: 'Las unidades han sido actualizadas' });
+};
+
+const deleteProduct = async (req, res, next) => {
+  try {
+      const { userId, productId } = req.params;
+      const result = await Product.deleteOne({ "_id.productId": productId, "_id.userId": userId });
+      const products = await Product.find({ "_id.userId": userId }); 
+      if (result.deletedCount === 0) {
+          res.status(404).send({ message: 'The product does not exists' });
+          return;
+      }
+      res.status(200).send({ message: 'El producto ha sido eliminado', productos: products});
+      
+      } catch (error) {
+          // Manejo de errores con middleware de errores
+          next(error); 
+      }
+};
+
+const getOrderDetails = async (req, res) => {
+  const {userId} = req.params
+  //const {userId, restaurantId, email } = req.body
+  const user = await User.findOne({email})
+  const cart = await Cart.findOne({ userId });
+  const products = await Product.find({ "_id.userId": userId }); 
+  if (!cart) {
+      return res.status(404).json({ message: 'No tiene un pedido activo' });
+  }
+  if (!products.length) { // Verificar si el array de productos está vacío
+      return res.status(404).json({ message: 'No tiene productos para comprar' });
+  }
+  let totalPrice = 0
+  for (const product of products) {
+      totalPrice+=product.units*product.price
+  }
+
+  if (!user) { 
+      return res.status(404).json({ message: 'No se encontró el usuario' });
+  }
+  
+  const restaurantId = cart.restaurantId
+  const restaurante = await Restaurant.findOne({restaurantId})
+  if (!restaurante) {
+      return res.status(404).json({ message: 'No se encontró el restaurante' });
+  }    
+  const details={
+      userInfo: user,
+      restaurantDetails: restaurante,
+      deliveryDetails:cart,
+      productos: products,
+      total: totalPrice
+      }
+  res.status(200).send(details)
+};
+
 module.exports = {
     getShoppingCart,
     updateShoppingCart,
-    addProduct
+    addProduct,
+    updateProductUnits,
+    deleteProduct,
+    getOrderDetails
 }

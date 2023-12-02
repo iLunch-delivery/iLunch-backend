@@ -2,22 +2,30 @@ const express = require('express')
 const router = express.Router()
 
 const {
-    getShoppingCart,
-    editShoppingCart,
-    deleteProduct,
-    getShoppingCartDetails
-} = require('../controllers/shoppin-cart.controller')
+  getShoppingCart,
+  updateShoppingCart,
+  addProduct,
+  updateProductUnits,
+  deleteProduct,
+  getOrderDetails
+} = require('../controllers/shopping-cart.controller')
 
 //GET - get shopping cart elements
 router.get('/:userId', getShoppingCart)
 
-//DELETE - delete shopping cart item
+//PUT - update shopping cart elements or create new one shopping cart
+router.put('/:userId/update', updateShoppingCart)
+
+//PUT - add shopping cart product o increment units of the  exist product
+router.put('/:userId/add_product/:productId', addProduct)
+
+//DELETE - delete shopping cart product
 router.delete('/:userId/delete_product/:productId', deleteProduct)
 
-//GET - get order details
-router.get('/order/:userId', getShoppingCartDetails)
+//PUT - update shopping cart product units
+router.put('/:userId/update_product/:productId', updateProductUnits)
 
-//PUT - update product units
-router.put('/:userId/update_product/:productId', editShoppingCart)
+//GET - get order details
+router.get('/order/:userId', getOrderDetails)
 
 module.exports = router;
