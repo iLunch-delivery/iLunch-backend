@@ -35,10 +35,12 @@ const getJobInfo = async (req, res, next) => {
 /* PATCH - update jobs list for an user */
 const deleteOfferByUser = async (req, res, next) => {
   const { userId, jobId } = req.params
+  console.log('userId', userId, 'jobId', jobId)
   if (!userId || !jobId) {
     res.status(400).json({ message: 'userId and jobId are required' })
   }
   const deletedOffer = await Offers.findOneAndDelete({ userId, jobId })
+  console.log('deletedOffer', deletedOffer)
   if (deletedOffer) {
     res.status(200).json({ message: 'Offer deleted' })
   } else {
@@ -49,12 +51,13 @@ const deleteOfferByUser = async (req, res, next) => {
 /* POST - create new job */
 const createJob = async (req, res, next) => {
   const requiredFields = {
-    address: 'address is required',
+    _id: 'id is required',
+    restaurantId: 'restaurantId is required',
+    imageURL: 'imageURL is required',
+    title: 'title is required',
     description: 'description is required',
-    name: 'name is required',
-    phone: 'phone is required',
-    price: 'price is required',
-    userId: 'userId is required'
+    offerTime: 'offerTime is required',
+    offerSalary: 'offerSalary is required'
   }
 
   for (const field in requiredFields) {
@@ -75,29 +78,10 @@ const createJob = async (req, res, next) => {
   }
 }
 
-/* PATCH - update job info */
-const updateJob = async (req, res, next) => {
-  const { jobId, ...updates } = req.body
-
-  try {
-    const updatedUser = await Jobs.findOneAndUpdate({ jobId }, updates, {
-      new: true
-    })
-    if (!updatedUser) {
-      res.status(404).json({ message: 'Job not found' })
-    } else {
-      res.status(200).json(updatedUser)
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message })
-  }
-}
-
 module.exports = {
   getAllJobs,
   getJobsByUser,
   getJobInfo,
   deleteOfferByUser,
-  createJob,
-  updateJob
+  createJob
 }

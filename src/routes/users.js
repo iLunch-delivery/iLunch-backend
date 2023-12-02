@@ -14,9 +14,9 @@ router.get('/login/:email/:password/', getLoginUser)
 router.post('/signup/', singUpUser)
 
 /* PATCH - update user info */
-router.patch('/update/', updateUser)
+router.post('/update/', updateUser)
 
 /* GET - get user files  */
-router.get('/files/', getUserFiles)
+router.get('/files/:id_type/:user_id', getUserFiles)
 
 module.exports = router

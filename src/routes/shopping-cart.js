@@ -8,7 +8,7 @@ const {
   //getShoppingCartDetails,
   updateShoppingCart,
   addProduct
-} = require('../controllers/shoppin-cart.controller')
+} = require('../controllers/shopping-cart.controller')
 
 //GET - get shopping cart elements
 router.get('/:userId', getShoppingCart)

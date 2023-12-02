@@ -59,7 +59,7 @@ const singUpUser = async (req, res, next) => {
 /*Así como está, no va a dejar editar nombre y contraseña (y eso es bueno)*/
 /*Tampoco permite cambiar la identificación, porque es la key de los usuarios*/
 const updateUser = async (req, res, next) => {
-  const { name, password, email, ...updates } = req.body
+  const { email, ...updates } = req.body
 
   try {
     const updatedUser = await User.findOneAndUpdate({ email }, updates, {
@@ -77,8 +77,8 @@ const updateUser = async (req, res, next) => {
 
 /* GET - get user files  */
 const getUserFiles = async (req, res, next) => {
-  const { user_id } = req.body
-  const userFile = await Files.find({ user_id })
+  const { id_type, user_id } = req.params
+  const userFile = await Files.find({ id_type, user_id })
 
   if (userFile.length === 0) {
     res.status(404).json({ message: 'user has no files' })
