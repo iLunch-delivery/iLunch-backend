@@ -21,7 +21,7 @@ const getShoppingCart = async (req, res, next) => {
                 totalProductsPrice += product.price * product.units;
             }
             const platformFee = totalProductsPrice * Number(process.env.PLATFORM_FEE);
-			const restaurant = await Restaurant.findOne({_id: cart.restaurantId})
+			const restaurant = await Restaurant.findById(cart.restaurantId)
             const order = { 
 				...cart.toObject(), 
 				products: products, 
@@ -126,39 +126,35 @@ const deleteProduct = async (req, res, next) => {
 };
 
 const getOrderDetails = async (req, res) => {
-  const {userId} = req.params
-  //const {userId, restaurantId, email } = req.body
-  const user = await User.findOne({email})
-  const cart = await Cart.findOne({ userId });
-  const products = await Product.find({ "_id.userId": userId }); 
-  if (!cart) {
-      return res.status(404).json({ message: 'No tiene un pedido activo' });
-  }
-  if (!products.length) { // Verificar si el array de productos está vacío
-      return res.status(404).json({ message: 'No tiene productos para comprar' });
-  }
-  let totalPrice = 0
-  for (const product of products) {
-      totalPrice+=product.units*product.price
-  }
+	const {userId} = req.params
+	const cart = await Cart.findOne({ userId });
+	if (!cart) {
+		return res.status(404).json({ message: 'No tienes un carrito de compra aún. Primero añade productos al carrito.' });
+	}
+	const products = await Product.find({ "_id.userId": userId }); 
+	if (!products.length) { // Verificar si el array de productos está vacío
+		return res.status(404).json({ message: 'No tienes productos añadidos al carrito de compra.' });
+	}
+	let totalProductsPrice = 0;
+	for (const product of products) {
+		totalProductsPrice += product.price * product.units;
+	}
+	const platformFee = totalProductsPrice * Number(process.env.PLATFORM_FEE);
 
-  if (!user) { 
-      return res.status(404).json({ message: 'No se encontró el usuario' });
-  }
-  
-  const restaurantId = cart.restaurantId
-  const restaurant = await Restaurant.findOne({restaurantId})
-  if (!restaurant) {
-      return res.status(404).json({ message: 'No se encontró el restaurante' });
-  }    
-  const details={
-      userInfo: user,
-      restaurantDetails: restaurant,
-      deliveryDetails:cart,
-      productos: products,
-      total: totalPrice
-      }
-  res.status(200).send(details)
+	const restaurantId = cart.restaurantId
+	const restaurant = await Restaurant.findById(restaurantId)
+	if (!restaurant) {
+		return res.status(404).json({ message: 'No se encontró el restaurante asociado el pedido actual.' });
+	}    
+	const details = {
+		deliveryDetails: cart,
+		products: products,
+		homeDeliveryPrice: restaurant.homeDeliveryPrice, 
+		totalProductsPrice: totalProductsPrice,
+		platformFee: platformFee,
+		restaurantDetails: restaurant,
+	}
+	res.status(200).send(details)
 };
 
 module.exports = {
