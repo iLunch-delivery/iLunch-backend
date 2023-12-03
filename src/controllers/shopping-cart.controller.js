@@ -9,7 +9,8 @@ const getShoppingCart = async (req, res, next) => {
         try {
             const { userId } = req.params;
             const cart = await Cart.findOne({ userId });
-            const products = await Product.find({ "_id.userId": userId }); // Cambiado de findOne a find para obtener un array
+            const products = await Product.find({ "_id.userId": userId });
+			const restaurant = await Restaurant.findOne({restaurantId})
             if (!cart) {
                 return res.status(404).json({ message: 'Shopping cart does not exist' });
             }
@@ -21,7 +22,13 @@ const getShoppingCart = async (req, res, next) => {
                 totalPrice += product.price * product.units;
             }
             const platformFee = totalPrice * Number(process.env.PLATFORM_FEE);
-            const order = { ...cart.toObject(), products: products, totalPrice: totalPrice, platformFee: platformFee }; // Incluir el array de productos en la respuesta
+            const order = { 
+				...cart.toObject(), 
+				products: products, 
+				homeDeliveryPrice: restaurant.homeDeliveryPrice, 
+				totalPrice: totalPrice, 
+				platformFee: platformFee
+			}; // Incluir el array de productos en la respuesta, junto con el precio de domicilio, precio total y la comisión de la plataforma
             res.status(200).json(order);
         } catch (error) {
             // Manejo de errores con middleware de errores
@@ -67,20 +74,35 @@ const addProduct = async (req, res, next) => {
         const { userId, productId } = req.params;
         const body = req.body; // O los datos específicos a actualizar
 
+        let cart = await Cart.findOne({ userId });
+        if (!cart) {
+			// Crear un nuevo carrito si no existe
+			cart = new Cart({
+				_id: new mongoose.Types.ObjectId(),
+				userId: userId,
+				restaurantId: body.restaurantId,
+				deliveryWay: "",
+				paymentMethod: "",
+				additionalComments: ""
+			});
+
+			await cart.save();
+        }
+
         await Product.updateOne(
-            {
-                '_id.userId': userId,
-                '_id.productId': new mongoose.Types.ObjectId(productId)
-            },
-            {
-                $set: {
-                    imageURL: body.imageURL,
-                    title: body.title,
-                    price: body.price
-                },
-                $inc: { units: 1 } // Incrementar en 1 las unidades
-            },
-            { upsert: true } // Crear el documento si no existe
+			{
+				'_id.userId': userId,
+				'_id.productId': new mongoose.Types.ObjectId(productId)
+			},
+			{
+				$set: {
+					imageURL: body.imageURL,
+					title: body.title,
+					price: body.price
+				},
+				$inc: { units: 1 } // Incrementar en 1 las unidades
+			},
+          	{ upsert: true } // Crear el documento si no existe
         );
 
         res.status(200).json({ message: 'Producto actualizado o creado exitosamente' });
@@ -143,13 +165,13 @@ const getOrderDetails = async (req, res) => {
   }
   
   const restaurantId = cart.restaurantId
-  const restaurante = await Restaurant.findOne({restaurantId})
-  if (!restaurante) {
+  const restaurant = await Restaurant.findOne({restaurantId})
+  if (!restaurant) {
       return res.status(404).json({ message: 'No se encontró el restaurante' });
   }    
   const details={
       userInfo: user,
-      restaurantDetails: restaurante,
+      restaurantDetails: restaurant,
       deliveryDetails:cart,
       productos: products,
       total: totalPrice

@@ -10,11 +10,11 @@ const getRestaurantById = async (req, res, next) => {
             const menu = await Menus.findOne({ restaurantId: Number(restaurantId) });
 
             if (!restaurant) {
-                return res.status(404).json({ message: 'Restaurant not found' });
+                return res.status(404).json({ message: 'Restaurante no encontrado' });
             }
             // Si no se encuentra un menu
             if (!menu) {
-                return res.status(404).json({ message: 'Menu not found for the provided restaurantId' });
+                return res.status(404).json({ message: 'Menu no encontrado para este restaurante' });
             }
             // Combina la información del restaurante y el menu en un solo objeto para la respuesta
             const restaurantWithMenu = { ...restaurant.toObject(), menu: menu.menu };
