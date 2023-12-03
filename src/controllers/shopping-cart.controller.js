@@ -111,20 +111,18 @@ const updateProductUnits = async (req, res) => {
 };
 
 const deleteProduct = async (req, res, next) => {
-  try {
-      const { userId, productId } = req.params;
-      const result = await Product.deleteOne({ "_id.productId": productId, "_id.userId": userId });
-      const products = await Product.find({ "_id.userId": userId }); 
-      if (result.deletedCount === 0) {
-          res.status(404).send({ message: 'The product does not exists' });
-          return;
-      }
-      res.status(200).send({ message: 'El producto ha sido eliminado', productos: products});
-      
-      } catch (error) {
-          // Manejo de errores con middleware de errores
-          next(error); 
-      }
+  	try {
+		const { userId, productId } = req.params;
+		const result = await Product.deleteOne({ "_id.productId": new mongoose.Types.ObjectId(productId), "_id.userId": userId });
+		if (result.deletedCount === 0) {
+			res.status(404).send({ message: 'Error: La eliminación no ha podido ser realizada' });
+			return;
+		}
+		res.status(200).send({ message: 'El producto ha sido eliminado del carrito exitosamente' });
+	} catch (error) {
+		// Manejo de errores con middleware de errores
+		next(error); 
+	}
 };
 
 const getOrderDetails = async (req, res) => {
