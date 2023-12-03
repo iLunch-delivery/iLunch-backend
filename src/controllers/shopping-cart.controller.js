@@ -9,19 +9,19 @@ const getShoppingCart = async (req, res, next) => {
         try {
             const { userId } = req.params;
             const cart = await Cart.findOne({ userId });
-            const products = await Product.find({ "_id.userId": userId });
-			const restaurant = await Restaurant.findOne({restaurantId})
             if (!cart) {
-                return res.status(404).json({ message: 'El carrito de compra no existe' });
+                return res.status(404).json({ message: 'El carrito de compra aún no existe. Primero añade productos de un restaurante.' });
             }
+			const products = await Product.find({ "_id.userId": userId });
             if (!products.length) { // Verificar si el array de productos está vacío
                 return res.status(404).json({ message: 'El carrito de compra está vacío' });
             }
-            let totalPrice = 0;
+            let totalProductsPrice = 0;
             for (const product of products) {
                 totalProductsPrice += product.price * product.units;
             }
-            const platformFee = totalPrice * Number(process.env.PLATFORM_FEE);
+            const platformFee = totalProductsPrice * Number(process.env.PLATFORM_FEE);
+			const restaurant = await Restaurant.findOne({_id: cart.restaurantId})
             const order = { 
 				...cart.toObject(), 
 				products: products, 
@@ -100,14 +100,14 @@ const updateProductUnits = async (req, res) => {
   const newUnits = req.body.units
   const update = { units: newUnits };
   
-  const result = await Product.updateOne({ "_id.productId": productId, "_id.userId": userId }, update);
+  const result = await Product.updateOne({ "_id.productId": new mongoose.Types.ObjectId(productId), "_id.userId": userId }, update);
   
   if (result.nModified === 0) {
-      res.status(404).send({ message: 'El producto no existe' });
+      res.status(404).send({ message: 'Error: La actualización no ha podido ser realizada' });
       return;
   }
   
-  res.status(200).send({ message: 'Las unidades han sido actualizadas' });
+  res.status(200).send({ message: 'Las unidades del producto en el carrito se han actualizado exitosamente' });
 };
 
 const deleteProduct = async (req, res, next) => {
