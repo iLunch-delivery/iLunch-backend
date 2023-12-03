@@ -52,6 +52,7 @@ const searchRestaurants = async(req, res, next) => {
                     open: 1,
                     availability: 1,
                     logoURL: 1,
+                    distance: 1,
                     score: { $meta: "searchScore" }
                 }
                 }
@@ -62,7 +63,7 @@ const searchRestaurants = async(req, res, next) => {
             next(error); 
         }
     } else {
-        res.status(400).json({ message: 'No restaurantId provided' });
+        res.status(400).json({ message: 'No se ha proporcionado un término para realizar la búsqueda!' });
     }
 }
 
