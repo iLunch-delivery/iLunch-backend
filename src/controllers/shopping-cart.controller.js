@@ -8,7 +8,7 @@ const getShoppingCart = async (req, res, next) => {
     if (req.params?.userId) {
         try {
             const { userId } = req.params;
-            const cart = await Cart.findOne({ userId });
+            const cart = await Cart.findById(userId);
             if (!cart) {
                 return res.status(404).json({ message: 'El carrito de compra aún no existe. Primero añade productos de un restaurante.' });
             }
@@ -43,7 +43,7 @@ const updateShoppingCart = async (req, res, next) => {
     if (req.params?.userId) {
         try {
             const { userId } = req.params;
-            let cart = await Cart.findOne({ userId });
+            let cart = await Cart.findById(userId);
 			// Actualizar el carrito existente
 			Object.assign(cart, req.body);
 			await cart.save();
@@ -61,7 +61,7 @@ const addProduct = async (req, res, next) => {
         const { userId, productId } = req.params;
         const body = req.body; // O los datos específicos a actualizar
 
-        let cart = await Cart.findOne({ userId });
+        let cart = await Cart.findById(userId);
         if (!cart) {
 			// Crear un nuevo carrito si no existe
 			cart = new Cart({
@@ -127,7 +127,7 @@ const deleteProduct = async (req, res, next) => {
 
 const getOrderDetails = async (req, res) => {
 	const {userId} = req.params
-	const cart = await Cart.findOne({ userId });
+	const cart = await Cart.findById(userId);
 	if (!cart) {
 		return res.status(404).json({ message: 'No tienes un carrito de compra aún. Primero añade productos al carrito.' });
 	}

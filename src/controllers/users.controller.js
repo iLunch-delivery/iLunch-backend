@@ -9,27 +9,27 @@ const getLoginUser = async (req, res, next) => {
 
     /* Response */
     if (!user) {
-      res.status(404).json({ message: 'user not found' })
+      res.status(404).json({ message: 'User not found' })
     } else if (!req.params.password) {
-      res.status(400).json({ message: 'no password provided' })
+      res.status(400).json({ message: 'No password provided' })
     } else if (user.password !== req.params.password) {
-      res.status(400).json({ message: 'wrong password' })
+      res.status(400).json({ message: 'Wrong password' })
     } else {
       res.status(200).send(user)
     }
   } else {
-    res.status(400).json({ message: 'no email provided' })
+    res.status(400).json({ message: 'No email provided' })
   }
 }
 
 /* POST - create new user */
 const singUpUser = async (req, res, next) => {
   const requiredFields = {
-    address: 'address is required',
-    email: 'email is required',
-    name: 'name is required',
-    password: 'password is required',
-    phone: 'phone is required'
+    address: 'Address is required',
+    email: 'Email is required',
+    name: 'Name is required',
+    password: 'Password is required',
+    phone: 'Phone is required'
   }
 
   for (const field in requiredFields) {
@@ -39,12 +39,9 @@ const singUpUser = async (req, res, next) => {
   }
 
   const user = new User({
+    _id: new mongoose.Types.ObjectId(),
     ...req.body,
-    role: 'customer',
-    _id: {
-      idType: 0,
-      idNumber: 0
-    }
+    role: 'Customer',
   })
 
   try {
@@ -77,11 +74,11 @@ const updateUser = async (req, res, next) => {
 
 /* GET - get user files  */
 const getUserFiles = async (req, res, next) => {
-  const { id_type, user_id } = req.params
-  const userFile = await Files.find({ id_type, user_id })
+  const { userId } = req.params
+  const userFile = await Files.find({ userId })
 
   if (userFile.length === 0) {
-    res.status(404).json({ message: 'user has no files' })
+    res.status(404).json({ message: 'User has no files' })
   } else {
     res.status(200).json(userFile)
   }

@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 
 const FilesSchema = mongoose.Schema(
     {
-        id_type: { type: String, required: true },
-        user_id: { type: Number, required: true },
+        _id: { type: mongoose.Schema.Types.ObjectId },
+        userId: { type: Number, required: true },
         name: { type: String, required: true },
         description: { type: String, required: true },
         url: { type: String, required: true },

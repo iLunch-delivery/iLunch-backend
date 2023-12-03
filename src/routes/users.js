@@ -17,6 +17,6 @@ router.post('/signup/', singUpUser)
 router.post('/update/', updateUser)
 
 /* GET - get user files  */
-router.get('/files/:id_type/:user_id', getUserFiles)
+router.get('/files/:userId', getUserFiles)
 
 module.exports = router

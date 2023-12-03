@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const MenuItemSchema = new mongoose.Schema({
-  _id: mongoose.ObjectId,
+  _id: { type: mongoose.Schema.Types.ObjectId},
   imageURL: { type: String, required: true },
   title: { type: String, required: true },
   price: { type: Number, required: true },
