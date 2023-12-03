@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
   _id: { type: mongoose.Schema.Types.ObjectId},
-  userId: { type: Number, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
   deliveryWay: { type: String, default: 'Domicilio' }, // Asumiendo que podría estar vacío y no es requerido.
   paymentMethod: { type: String, default: 'Efectivo' }, // Asumiendo que podría estar vacío y no es requerido.
   restaurantId: { type: Number, default: 0 },

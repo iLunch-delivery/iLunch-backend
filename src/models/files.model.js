@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const FilesSchema = mongoose.Schema(
     {
         _id: { type: mongoose.Schema.Types.ObjectId },
-        userId: { type: Number, required: true },
+        userId: { type: mongoose.Schema.Types.ObjectId, required: true },
         name: { type: String, required: true },
         description: { type: String, required: true },
         url: { type: String, required: true },
