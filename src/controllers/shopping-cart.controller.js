@@ -12,23 +12,23 @@ const getShoppingCart = async (req, res, next) => {
             const products = await Product.find({ "_id.userId": userId });
 			const restaurant = await Restaurant.findOne({restaurantId})
             if (!cart) {
-                return res.status(404).json({ message: 'Shopping cart does not exist' });
+                return res.status(404).json({ message: 'El carrito de compra no existe' });
             }
             if (!products.length) { // Verificar si el array de productos está vacío
-                return res.status(404).json({ message: 'Shopping cart empty' });
+                return res.status(404).json({ message: 'El carrito de compra está vacío' });
             }
             let totalPrice = 0;
             for (const product of products) {
-                totalPrice += product.price * product.units;
+                totalProductsPrice += product.price * product.units;
             }
             const platformFee = totalPrice * Number(process.env.PLATFORM_FEE);
             const order = { 
 				...cart.toObject(), 
 				products: products, 
 				homeDeliveryPrice: restaurant.homeDeliveryPrice, 
-				totalPrice: totalPrice, 
+				totalProductsPrice: totalProductsPrice, 
 				platformFee: platformFee
-			}; // Incluir el array de productos en la respuesta, junto con el precio de domicilio, precio total y la comisión de la plataforma
+			}; // Incluir el array de productos en la respuesta, junto con el precio de domicilio, precio total de los productos y la comisión de la plataforma
             res.status(200).json(order);
         } catch (error) {
             // Manejo de errores con middleware de errores
@@ -44,23 +44,10 @@ const updateShoppingCart = async (req, res, next) => {
         try {
             const { userId } = req.params;
             let cart = await Cart.findOne({ userId });
-
-            if (!cart) {
-                // Crear un nuevo carrito si no existe
-                cart = new Cart({
-                    _id: new mongoose.Types.ObjectId(),
-                    userId,
-                    ...req.body
-                });
-
-                await cart.save();
-                res.status(200).json(cart);
-            } else {
-                // Actualizar el carrito existente
-                Object.assign(cart, req.body);
-                const result = await cart.save();
-                res.status(200).json({message: 'Success'});
-            }
+			// Actualizar el carrito existente
+			Object.assign(cart, req.body);
+			await cart.save();
+			res.status(200).json({message: 'Carrito de compra actualizado exitosamente'});
         } catch (error) {
             next(error);
         }
@@ -81,9 +68,6 @@ const addProduct = async (req, res, next) => {
 				_id: new mongoose.Types.ObjectId(),
 				userId: userId,
 				restaurantId: body.restaurantId,
-				deliveryWay: "",
-				paymentMethod: "",
-				additionalComments: ""
 			});
 
 			await cart.save();
