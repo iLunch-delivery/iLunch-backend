@@ -20,7 +20,7 @@ const RestaurantSchema = new mongoose.Schema({
   distance: { type: Number, required: true },
   address: { type: String, required: true },
   homeDeliveryPrice: { type: Number, required: true }
-}, { collection: 'Restaurants' });
+}, { collection: 'Restaurants', versionKey: false });
 
 const Restaurant = mongoose.model('Restaurants', RestaurantSchema);
 

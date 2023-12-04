@@ -10,7 +10,7 @@ const JobsSchema = mongoose.Schema(
     offerTime: { type: String, required: true },
     offerSalary: { type: String, required: true }
   },
-  { collection: 'Jobs' }
+  { collection: 'Jobs', versionKey: false }
 )
 
 const Jobs = mongoose.model('Jobs', JobsSchema)

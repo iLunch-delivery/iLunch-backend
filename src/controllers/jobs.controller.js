@@ -1,32 +1,48 @@
+const { default: mongoose } = require('mongoose');
 const Jobs = require('../models/jobs.model')
 const Offers = require('../models/offers.model')
 
 /* GET - get all jobs list */
 const getAllJobs = async (req, res, next) => {
-  const jobs = await Jobs.find()
-  res.status(200).json(jobs)
+  try {
+    const jobs = await Jobs.find()
+    res.status(200).json(jobs)
+  } catch (error) {
+    // Manejo de errores con middleware de errores
+    next(error); 
+  }
 }
 
 /* GET - get jobs list for an user */
 const getJobsByUser = async (req, res, next) => {
   if (req.params?.userId) {
-    const { userId } = req.params
-    const offers = await Offers.find({ userId })
-    const jobs = await Jobs.find({
-      _id: { $in: offers.map((offer) => offer.jobId) }
-    })
-    res.status(200).json(jobs)
+    try {
+      const { userId } = req.params
+      const offers = await Offers.find({ userId: new mongoose.Types.ObjectId(userId) })
+      const jobs = await Jobs.find({
+        _id: { $in: offers.map((offer) => offer.jobId) }
+      })
+      res.status(200).json(jobs)
+    } catch (error) {
+      // Manejo de errores con middleware de errores
+      next(error); 
+    }
   } else {
-    res.status(400).json({ message: 'no userId provided' })
+    res.status(400).json({ message: 'No userId provided' })
   }
 }
 
 /* GET - get a job info  */
 const getJobInfo = async (req, res, next) => {
   if (req.params?.jobId) {
-    const { jobId } = req.params
-    const job = await Jobs.findOne({ _id: jobId })
-    res.status(200).json(job)
+    try {
+      const { jobId } = req.params
+      const job = await Jobs.findOne({ _id: jobId })
+      res.status(200).json(job)
+    } catch (error) {
+      // Manejo de errores con middleware de errores
+      next(error); 
+    }
   } else {
     res.status(400).json({ message: 'no jobId provided' })
   }
@@ -39,8 +55,15 @@ const deleteOfferByUser = async (req, res, next) => {
   if (!userId || !jobId) {
     res.status(400).json({ message: 'userId and jobId are required' })
   }
-  const deletedOffer = await Offers.findOneAndDelete({ userId, jobId })
-  console.log('deletedOffer', deletedOffer)
+  try {
+    const deletedOffer = await Offers.findOneAndDelete({ 
+      userId: ({ userId: new mongoose.Types.ObjectId(userId) }), 
+      jobId: jobId })
+    console.log('deletedOffer', deletedOffer)
+  } catch (error) {
+    // Manejo de errores con middleware de errores
+    next(error); 
+  }
   if (deletedOffer) {
     res.status(200).json({ message: 'Offer deleted' })
   } else {
