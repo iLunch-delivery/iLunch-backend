@@ -68,9 +68,11 @@ const addProduct = async (req, res, next) => {
         _id: new mongoose.Types.ObjectId(),
         userId: new mongoose.Types.ObjectId(userId),
         restaurantId: body.restaurantId,
+        orderSent: false
       });
-
       await cart.save();
+    } else if (cart.orderSent) {
+      return res.status(400).json({ message: 'Hay un pedido en cusro: No puedes modificar el carrito de compra hasta que el pedido se complete.' });
     }
 
     await Product.updateOne(
@@ -89,7 +91,7 @@ const addProduct = async (req, res, next) => {
       { upsert: true } // Crear el documento si no existe
     );
 
-    res.status(200).json({ message: 'Producto actualizado o creado exitosamente' });
+    res.status(200).json({ message: 'Producto agregado al carrito.' });
   } catch (error) {
       next(error);
   }
