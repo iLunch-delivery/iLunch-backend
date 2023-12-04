@@ -9,7 +9,7 @@ const FilesSchema = mongoose.Schema(
         url: { type: String, required: true },
         weight: { type: String, required: true },
     },
-    { collection: 'User_files' }
+    { collection: 'User_files', versionKey: false }
 )
 
 const Files = mongoose.model('User_files', FilesSchema)

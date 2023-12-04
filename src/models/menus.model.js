@@ -12,7 +12,7 @@ const MenuSchema = new mongoose.Schema({
   _id: { type: mongoose.ObjectId, required: true },
   restaurantId: { type: Number, required: true },
   menu: { type: [MenuItemSchema], required: true }
-}, { collection: 'Menus' });
+}, { collection: 'Menus', versionKey: false });
 
 const Menu = mongoose.model('Menu', MenuSchema);
 

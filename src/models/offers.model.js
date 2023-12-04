@@ -6,7 +6,7 @@ const OffersSchema = mongoose.Schema(
     userId: { type: mongoose.Schema.Types.ObjectId, required: true },
     jobId: { type: Number, required: true }
   },
-  { collection: 'Work_offers' }
+  { collection: 'Work_offers', versionKey: false }
 )
 
 const Offers = mongoose.model('Work_offers', OffersSchema)

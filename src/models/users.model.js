@@ -13,7 +13,7 @@ const UserSchema = mongoose.Schema(
     idType: { type: String },
     speciality: { type: String }
   },
-  { collection: 'Users' }
+  { collection: 'Users', versionKey: false }
 )
 
 const User = mongoose.model('Users', UserSchema)
